@@ -1,10 +1,11 @@
+from __future__ import division
+
 import sys
 from math import log
 from collections import defaultdict
 
 
 class Unigram:
-
     LAMBDA_1 = 0.95
     LAMBDA_UNK = 1 - LAMBDA_1
     V = 1000000
@@ -30,7 +31,7 @@ class Unigram:
 
         probabilities = defaultdict(lambda: 0)
         for word, count in sorted(words_count.items()):
-            probabilities[word] = words_count[word] * 1.0 / total_words_count
+            probabilities[word] = words_count[word] / total_words_count
 
         self.probabilities = probabilities
 
@@ -52,16 +53,15 @@ class Unigram:
                     words.append("</s>")
                     for word in words:
                         w_count += 1
-                        p = Unigram.LAMBDA_UNK * 1.0 / Unigram.V
+                        p = Unigram.LAMBDA_UNK / Unigram.V
                         if word in self.probabilities:
                             p += Unigram.LAMBDA_1 * self.probabilities[word]
                         else:
                             unk += 1
                         h += -log(p, 2)
 
-        self.entropy = (h * 1.0 / w_count)
-        self.coverage = ((w_count - unk) * 1.0 / w_count)
-
+        self.entropy = (h / w_count)
+        self.coverage = ((w_count - unk) / w_count)
 
         return self
 
