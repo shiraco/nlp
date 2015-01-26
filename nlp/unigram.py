@@ -15,7 +15,6 @@ class Unigram:
         self.coverage = None
 
     def fit(self, train_data_file_name):
-        probabilities = defaultdict(lambda: 0)
         words_count = defaultdict(lambda: 0)
         total_words_count = 0
 
@@ -29,10 +28,11 @@ class Unigram:
                         words_count[word] += 1
                         total_words_count += 1
 
-        self.probabilities = probabilities
-
+        probabilities = defaultdict(lambda: 0)
         for word, count in sorted(words_count.items()):
-            self.probabilities[word] = words_count[word] / total_words_count
+            probabilities[word] = words_count[word] * 1.0 / total_words_count
+
+        self.probabilities = probabilities
 
         return self
 
@@ -52,15 +52,16 @@ class Unigram:
                     words.append("</s>")
                     for word in words:
                         w_count += 1
-                        p = Unigram.LAMBDA_UNK / Unigram.V
+                        p = Unigram.LAMBDA_UNK * 1.0 / Unigram.V
                         if word in self.probabilities:
                             p += Unigram.LAMBDA_1 * self.probabilities[word]
                         else:
                             unk += 1
                         h += -log(p, 2)
 
-        self.entropy = (h / w_count)
-        self.coverage = ((w_count - unk) / w_count)
+        self.entropy = (h * 1.0 / w_count)
+        self.coverage = ((w_count - unk) * 1.0 / w_count)
+
 
         return self
 
