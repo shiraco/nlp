@@ -1,5 +1,5 @@
 import sys
-from math import log2
+from math import log
 from collections import defaultdict
 
 
@@ -54,7 +54,7 @@ class Unigram:
                             p += Unigram.LAMBDA_1 * self.probabilities[word]
                         else:
                             unk += 1
-                        h += -log2(p)
+                        h += -log(p, 2)
 
         self.entropy = (h / w_count)
         self.coverage = ((w_count - unk) / w_count)
