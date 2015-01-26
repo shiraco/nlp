@@ -1,9 +1,16 @@
-language: python
+language:
+  - python
+
 python:
   - "2.7"
   - "3.4"
-# command to install dependencies
+
 install:
   - "pip install -r requirements.txt"
-# command to run tests
-script: nosetests
+  - "pip install coveralls"
+
+script:
+  - "nosetests --cover-package=nlp --with-coverage"
+
+after_success:
+  - coveralls
