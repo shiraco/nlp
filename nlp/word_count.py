@@ -41,11 +41,12 @@ class WordCount:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Invalid arguments.")
+        quit()
+
     in_file_name = sys.argv[1]
     out_file_name = sys.argv[2]
-
-    if len(sys.argv) != 2:
-        quit()
 
     wc = WordCount()
     wc.count(in_file_name).to_file(out_file_name)
