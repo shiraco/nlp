@@ -9,7 +9,7 @@ build:
         install_wheel: false # Enable wheel to speed up builds (experimental)
 
     # A step that executes `pip install` command.
-    - pip-install
+    - pip-install:
         name: pip install nosetests
         code: |
           pip install nosetests
