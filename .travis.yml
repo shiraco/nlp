@@ -14,3 +14,7 @@ script:
 
 after_success:
   - coveralls
+
+notifications:
+  slack: shiraco:c0bbZXum5ZgJWORGvxMXf9jD
+  
