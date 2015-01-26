@@ -17,4 +17,3 @@ after_success:
 
 notifications:
   slack: shiraco:c0bbZXum5ZgJWORGvxMXf9jD
-  
