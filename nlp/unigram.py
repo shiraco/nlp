@@ -10,26 +10,29 @@ class Unigram:
     V = 1000000
 
     def __init__(self):
-        self.counts = defaultdict(lambda: 0)
-        self.probabilities = defaultdict(lambda: 0)
-        self.total_words_count = 0
-
-        self.entropy = 0
-        self.coverage = 0
+        self.probabilities = {}
+        self.entropy = None
+        self.coverage = None
 
     def fit(self, train_data_file_name):
-        with open(train_data_file_name, "r") as train_f:
-            for line in train_f:
+        probabilities = defaultdict(lambda: 0)
+        words_count = defaultdict(lambda: 0)
+        total_words_count = 0
+
+        with open(train_data_file_name, "r") as f:
+            for line in f:
                 line = line.strip()
                 if len(line) != 0:
                     words = line.split(" ")
                     words.append("</s>")
                     for word in words:
-                        self.counts[word] += 1
-                        self.total_words_count += 1
+                        words_count[word] += 1
+                        total_words_count += 1
 
-        for word, count in sorted(self.counts.items()):
-            self.probabilities[word] = self.counts[word] / self.total_words_count
+        self.probabilities = probabilities
+
+        for word, count in sorted(words_count.items()):
+            self.probabilities[word] = words_count[word] / total_words_count
 
         return self
 
@@ -41,8 +44,8 @@ class Unigram:
         if model_file_name:
             self.probabilities = Unigram.read_model_file(model_file_name)
 
-        with open(test_data_file_name, "r") as test_f:
-            for line in test_f:
+        with open(test_data_file_name, "r") as f:
+            for line in f:
                 line = line.strip()
                 if len(line) != 0:
                     words = line.split(" ")
@@ -111,7 +114,6 @@ class Unigram:
 
 
 if __name__ == "__main__":
-
     if len(sys.argv) != 5:
         print("Invalid arguments.")
         quit()
