@@ -6,14 +6,14 @@ from collections import defaultdict
 
 
 class Unigram:
-    LAMBDA_1 = 0.95
-    LAMBDA_UNK = 1 - LAMBDA_1
-    V = 1000000
+    VOCABULARY = 1000000  # 未知語を含む語彙数
+    LAMBDA_1 = 0.95  # 既知語確率
+    LAMBDA_UNKNOWN = 1 - LAMBDA_1  # 未知語確率
 
-    def __init__(self):
-        self.probabilities = {}
-        self.entropy = None
-        self.coverage = None
+    def __init__(self, probabilities={}):
+        self.probabilities = probabilities
+        self.entropy = None  # エントロピー (尤度 -> 対数尤度 -> エントロピー)
+        self.coverage = None  # 評価データに現れた単語（n-gram）の中で、モデルに含まれている割合
 
     def fit(self, train_data_file_name):
         words_count = defaultdict(lambda: 0)
@@ -31,6 +31,8 @@ class Unigram:
 
         probabilities = defaultdict(lambda: 0)
         for word, count in sorted(words_count.items()):
+            # probabilities := p(word[w_i] | word[w_1] ... word[w_i-1])
+            #               .= p(word[w_i])
             probabilities[word] = words_count[word] / total_words_count
 
         self.probabilities = probabilities
@@ -38,12 +40,13 @@ class Unigram:
         return self
 
     def predict(self, test_data_file_name, model_file_name=None):
-        w_count = 0
-        h = 0
-        unk = 0
+        words_count = 0
+        unknown_word_count = 0
+        h = 0  # := -1 * 対数尤度 (対数の底=2)
 
         if model_file_name:
-            self.probabilities = Unigram.read_model_file(model_file_name)
+            probabilities = Unigram.read_model_file(model_file_name)
+            self.__init__(probabilities)
 
         with open(test_data_file_name, "r") as f:
             for line in f:
@@ -52,16 +55,20 @@ class Unigram:
                     words = line.split(" ")
                     words.append("</s>")
                     for word in words:
-                        w_count += 1
-                        p = Unigram.LAMBDA_UNK / Unigram.V
-                        if word in self.probabilities:
+                        words_count += 1
+                        p = Unigram.LAMBDA_UNKNOWN / Unigram.VOCABULARY
+
+                        if word in self.probabilities:  # 既知語
                             p += Unigram.LAMBDA_1 * self.probabilities[word]
-                        else:
-                            unk += 1
+                        else:  # 未知語
+                            unknown_word_count += 1
+
                         h += -log(p, 2)
 
-        self.entropy = (h / w_count)
-        self.coverage = ((w_count - unk) / w_count)
+        # entropy := (1 / W_test) * sum(-log(P(W | M), 2)
+        self.entropy = (h / words_count)
+
+        self.coverage = ((words_count - unknown_word_count) / words_count)
 
         return self
 
@@ -79,7 +86,6 @@ class Unigram:
                     else:
                         probabilities = defaultdict(lambda: 0)
                         break
-
         return probabilities
 
     @classmethod
@@ -108,8 +114,8 @@ class Unigram:
             for word, probability in sorted(self.probabilities.items()):
                 f.write("{0}\t{1:.6f}\n".format(word, probability))
 
-    def to_file(self, word_counted_file_name):
-        with open(word_counted_file_name, "w") as f:
+    def to_file(self, summary_file_name):
+        with open(summary_file_name, "w") as f:
             f.write("entropy = {0:.6f}\n".format(self.entropy))
             f.write("coverage = {0:.6f}\n".format(self.coverage))
 
