@@ -5,6 +5,7 @@ import sys
 from math import log
 from collections import defaultdict
 import numpy as np
+import copy
 
 
 class Bigram:
@@ -63,7 +64,7 @@ class Bigram:
         """
         iterations = int(1 / step)
         lambda_1_list = [i / iterations for i in range(1, iterations)]
-        lambda_2_list = lambda_1_list.copy()
+        lambda_2_list = copy.copy(lambda_1_list)  # python3: lambda_1_list.copy()
 
         entropies = [[self.predict(test_data_file_name, model_file_name, x1, x2) for x1 in lambda_1_list] for x2 in lambda_2_list]
         entropies = np.array(entropies)
