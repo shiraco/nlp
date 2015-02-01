@@ -66,7 +66,8 @@ class Bigram:
         lambda_1_list = [i / iterations for i in range(1, iterations)]
         lambda_2_list = copy.copy(lambda_1_list)  # python3: lambda_1_list.copy()
 
-        entropies = [[self.predict(test_data_file_name, model_file_name, x1, x2) for x1 in lambda_1_list] for x2 in lambda_2_list]
+        entropies = [[self.predict(test_data_file_name, model_file_name, x1, x2) for x1 in lambda_1_list]
+                     for x2 in lambda_2_list]
         entropies = np.array(entropies)
 
         min_index = np.unravel_index(entropies.argmin(), entropies.shape)
