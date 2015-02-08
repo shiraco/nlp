@@ -54,7 +54,7 @@ class Bigram:
 
         return self
 
-    def predict_all(self, test_data_file_name, model_file_name=None, step=0.05):
+    def score_all(self, test_data_file_name, model_file_name=None, step=0.05):
         """
         補間係数の選択法：グリッド探索
         :param test_data_file_name:
@@ -66,7 +66,7 @@ class Bigram:
         lambda_1_list = [i / iterations for i in range(1, iterations)]
         lambda_2_list = copy.copy(lambda_1_list)  # python3: lambda_1_list.copy()
 
-        entropies = [[self.predict(test_data_file_name, model_file_name, x1, x2) for x1 in lambda_1_list]
+        entropies = [[self.score(test_data_file_name, model_file_name, x1, x2) for x1 in lambda_1_list]
                      for x2 in lambda_2_list]
         entropies = np.array(entropies)
 
@@ -75,7 +75,7 @@ class Bigram:
 
         return self
 
-    def predict(self, test_data_file_name, model_file_name=None, lambda_1=0.05, lambda_2=0.05):
+    def score(self, test_data_file_name, model_file_name=None, lambda_1=0.05, lambda_2=0.05):
         words_count = 0
         h = 0  # := -1 * 対数尤度 (対数の底=2)
 
@@ -141,4 +141,4 @@ if __name__ == "__main__":
 
     bg = Bigram()
     bg.fit(in_train_data_file_name).to_model_file(model_file_name)
-    bg.predict_all(in_test_data_file_name, model_file_name).to_file(out_data_file_name)
+    bg.score_all(in_test_data_file_name, model_file_name).to_file(out_data_file_name)

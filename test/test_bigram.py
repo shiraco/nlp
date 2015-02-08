@@ -11,14 +11,14 @@ class TestBigram(unittest.TestCase):
         expected = Bigram.read_model_file("test/resource/02-train-answer.txt")
         self.assertEqual(dict(actual), dict(expected))
 
-    def test_predict(self):
+    def test_score(self):
         bg = Bigram()
-        actual_entropy = bg.fit("test/resource/01-train-input.txt").predict("test/resource/wiki-en-train.word")
+        actual_entropy = bg.fit("test/resource/01-train-input.txt").score("test/resource/wiki-en-train.word")
         self.assertIsNotNone(actual_entropy)
 
-    def test_predict_all(self):
+    def test_score_all(self):
         bg = Bigram()
-        actual = bg.fit("test/resource/01-train-input.txt").predict_all("test/resource/wiki-en-train.word")
+        actual = bg.fit("test/resource/01-train-input.txt").score_all("test/resource/wiki-en-train.word")
         self.assertIsNotNone(actual)
         self.assertIsNotNone(actual.lambda_1)
         self.assertIsNotNone(actual.lambda_2)

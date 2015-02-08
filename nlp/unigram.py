@@ -40,7 +40,7 @@ class Unigram:
 
         return self
 
-    def predict(self, test_data_file_name, model_file_name=None):
+    def score(self, test_data_file_name, model_file_name=None):
         words_count = 0
         unknown_word_count = 0
         h = 0  # := -1 * 対数尤度 (対数の底=2)
@@ -133,4 +133,4 @@ if __name__ == "__main__":
 
     ug = Unigram()
     ug.fit(in_train_data_file_name).to_model_file(model_file_name)
-    ug.predict(in_test_data_file_name, model_file_name).to_file(out_data_file_name)
+    ug.score(in_test_data_file_name, model_file_name).to_file(out_data_file_name)
